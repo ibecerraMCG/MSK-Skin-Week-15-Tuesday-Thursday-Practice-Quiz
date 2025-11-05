@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 15 Tuesday & Thursday Practice Quiz</title>
+    <style>
+        /* --- Color Variables --- */
+        :root {
+            /* Default: Dark Theme */
+            --bg-color: #2d343e;
+            /* Dark background */
+            --container-bg: #3c424f;
+            /* Slightly lighter container */
+            --text-color: #e8e6e3;
+            /* Light text */
+            --question-text-color: #8ab4f8;
+            /* Light blue for questions */
+            --lo-text-color: #b0c4de;
+            /* Lighter blue for learning objective */
+            --border-color: #555;
+            /* Darker borders */
+            --separator-color: #4a4f5a;
+            --label-bg: #454c5a;
+            --label-border: #6c757d;
+            --label-hover-bg: #525966;
+            --label-hover-border: #7a828a;
+            --button-bg: #8ab4f8;
+            --button-text: #202124;
+            --button-hover-bg: #a3c5f9;
+            --button-disabled-bg: #5f6368;
+            --feedback-correct-bg: #344e41;
+            --feedback-correct-text: #c7f9cc;
+            --feedback-correct-border: #52b788;
+            --feedback-incorrect-bg: #5e2129;
+            --feedback-incorrect-text: #f8d7da;
+            --feedback-incorrect-border: #a4133c;
+            --feedback-rationale-text: #adb5bd;
+            /* Lighter gray for rationale */
+            --feedback-source-text: #c7d3e0;
+            --feedback-separator: #6c757d;
+            --radio-accent: #8ab4f8;
+        }
+
+        .light-theme {
+            --bg-color: #eef2f7;
+            --container-bg: #ffffff;
+            --text-color: #343a40;
+            --question-text-color: #0056b3;
+            --lo-text-color: #5a6e8a;
+            --border-color: #dee2e6;
+            --separator-color: #e9ecef;
+            --label-bg: #f8f9fa;
+            --label-border: #ced4da;
+            --label-hover-bg: #e2e6ea;
+            --label-hover-border: #adb5bd;
+            --button-bg: #007bff;
+            --button-text: white;
+            --button-hover-bg: #0056b3;
+            --button-disabled-bg: #6c757d;
+            --feedback-correct-bg: #d1e7dd;
+            --feedback-correct-text: #0f5132;
+            --feedback-correct-border: #badbcc;
+            --feedback-incorrect-bg: #f8d7da;
+            --feedback-incorrect-text: #842029;
+            --feedback-incorrect-border: #f5c2c7;
+            --feedback-rationale-text: #495057;
+            --feedback-source-text: #343a40;
+            --feedback-separator: #ccc;
+            --radio-accent: #007bff;
+        }
+
+        /* --- General Styles --- */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            line-height: 1.7;
+            margin: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding-bottom: 40px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        #theme-toggle-button {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            padding: 8px 12px;
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            border: 1px solid var(--label-border);
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            z-index: 1000;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        #theme-toggle-button:hover {
+            opacity: 0.8;
+        }
+
+        #quiz-container {
+            max-width: 900px;
+            margin: 80px auto 30px auto;
+            background: var(--container-bg);
+            padding: 25px 35px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--border-color);
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        .question-block {
+            margin-bottom: 35px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid var(--separator-color);
+            transition: border-color 0.3s;
+        }
+
+        .question-block:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 5px;
+        }
+
+        .learning-objective {
+            font-size: 0.85em;
+            font-style: italic;
+            color: var(--lo-text-color);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed var(--separator-color);
+        }
+
+        .question-text {
+            font-weight: 600;
+            font-size: 1.1em;
+            margin-bottom: 18px;
+            color: var(--question-text-color);
+            transition: color 0.3s;
+        }
+
+        .options label {
+            display: block;
+            margin-bottom: 12px;
+            cursor: pointer;
+            padding: 10px 15px;
+            border-radius: 6px;
+            border: 1px solid var(--label-border);
+            background-color: var(--label-bg);
+            transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+        }
+
+        .options label:hover {
+            background-color: var(--label-hover-bg);
+            border-color: var(--label-hover-border);
+        }
+
+        .options input[type="radio"]:checked+span {
+            font-weight: bold;
+            color: var(--question-text-color);
+        }
+
+        .options input[type="radio"] {
+            margin-right: 12px;
+            accent-color: var(--radio-accent);
+        }
+
+        .button-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .check-button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: background-color 0.2s, color 0.2s, opacity 0.2s;
+            background-color: var(--button-bg);
+            color: var(--button-text);
+        }
+
+        .check-button:hover {
+            opacity: 0.85;
+        }
+
+        .check-button:disabled {
+            background-color: var(--button-disabled-bg);
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            font-size: 0.95em;
+            display: none;
+            border: 1px solid transparent;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+        }
+
+        .feedback.correct {
+            background-color: var(--feedback-correct-bg);
+            color: var(--feedback-correct-text);
+            border-color: var(--feedback-correct-border);
+            display: block;
+        }
+
+        .feedback.incorrect {
+            background-color: var(--feedback-incorrect-bg);
+            color: var(--feedback-incorrect-text);
+            border-color: var(--feedback-incorrect-border);
+            display: block;
+        }
+
+        .feedback-status {
+            font-weight: bold;
+            font-size: 1.1em;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .feedback-rationale {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed var(--feedback-separator);
+            font-size: 0.9em;
+            color: var(--feedback-rationale-text);
+            transition: color 0.3s, border-color 0.3s;
+        }
+
+        .feedback-source {
+            margin-top: 10px;
+            font-size: 0.85em;
+            font-style: italic;
+            color: var(--feedback-source-text);
+            background-color: rgba(0, 0, 0, 0.1);
+            padding: 8px;
+            border-radius: 4px;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--question-text-color);
+            margin-top: 30px;
+            margin-bottom: 30px;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <button id="theme-toggle-button">Toggle Theme</button>
+    <h1>Week 15 Tuesday & Thursday Practice Quiz</h1>
+    <div id="quiz-container">
+        <!-- Questions will be loaded here by JavaScript -->
+    </div>
+    <script>
+        const quizData = [
+            // Inflammatory Arthritides Questions
+            {
+                learningObjective: "LO 1 (Inflammatory Arthritides): Recognize the shared features of the seronegative spondyloarthropathies.",
+                question: "A 35-year-old male with a history of psoriasis presents with severe pain and diffuse swelling of his entire right third toe, giving it a 'sausage digit' appearance. This clinical finding, a shared feature of seronegative spondyloarthropathies, is known as:",
+                options: {
+                    A: "Enthesitis",
+                    B: "Dactylitis",
+                    C: "Uveitis",
+                    D: "Spondylitis"
+                },
+                correctAnswer: "B",
+                rationale: "Dactylitis, or 'sausage digit,' is the diffuse swelling of an entire finger or toe. It is a hallmark feature of seronegative spondyloarthropathies and results from synovitis of the PIP and DIP joints combined with flexor tenosynovitis.",
+                source: "'Shared Features of Spondyloarthropathies... 3. Dactylitis... Dactylitis (\"sausage digit\")' (Inflammatory Arthritides, Slides 18, 19, 35)"
+            },
+            {
+                learningObjective: "LO 1 (Inflammatory Arthritides): Recognize the shared features of the seronegative spondyloarthropathies.",
+                question: "A 28-year-old man with ankylosing spondylitis complains of significant heel pain. On physical examination, there is tenderness, swelling, and erythema at the site of the Achilles tendon insertion into the calcaneus. This inflammation at the site where a tendon inserts into bone is a characteristic feature of spondyloarthropathies known as:",
+                options: {
+                    A: "Dactylitis",
+                    B: "Uveitis",
+                    C: "Enthesitis",
+                    D: "Arthritis"
+                },
+                correctAnswer: "C",
+                rationale: "Enthesitis is inflammation at an enthesis, which is the site of insertion of a ligament, tendon, or articular capsule into bone. The Achilles tendon insertion is a common site for enthesitis in seronegative spondyloarthropathies.",
+                source: "'Enthesis:= site of insertion of a ligament, tendon or articular capsule into the bone. Enthesis is the site of the initial inflammatory process (Enthesitis) in SpA... Common sites of enthesitis in SpA... Achilles and plantar fascia insertion.' (Inflammatory Arthritides, Slides 14, 20, 35)"
+            },
+            {
+                learningObjective: "LO 1 (Inflammatory Arthritides): Recognize the shared features of the seronegative spondyloarthropathies.",
+                question: "A 25-year-old male is diagnosed with inflammatory low back pain. His physician suspects a seronegative spondyloarthropathy and orders genetic testing. The presence of which of the following Major Histocompatibility Complex (MHC) Class I alleles would most strongly support this diagnosis?",
+                options: {
+                    A: "HLA-DR4",
+                    B: "HLA-DQ2",
+                    C: "HLA-B27",
+                    D: "HLA-A3"
+                },
+                correctAnswer: "C",
+                rationale: "HLA-B27 is a strong genetic risk factor associated with the entire group of seronegative spondyloarthropathies. While not required for diagnosis, its presence is a key shared feature and supports the clinical suspicion.",
+                source: "'Genetics: MHC Class I allele: HLA-B27... Shared features: HLA-B27 +' (Inflammatory Arthritides, Slides 12, 35)"
+            },
+            {
+                learningObjective: "LO 2 (Inflammatory Arthritides): Contrast the seronegative spondyloarthropathies based on clinical presentation and associated extra-skeletal manifestations: psoriatic arthritis, reactive arthritis, ankylosing spondylitis and inflammatory bowel disease-associated spondyloarthropathy.",
+                question: "A 22-year-old male develops acute, asymmetric oligoarthritis of the lower extremities four weeks after an episode of urethritis. He also complains of eye redness and burning. The classic triad of sterile arthritis, urethritis, and conjunctivitis is the hallmark of which condition?",
+                options: {
+                    A: "Psoriatic arthritis",
+                    B: "Reactive arthritis",
+                    C: "Ankylosing spondylitis",
+                    D: "IBD-associated arthritis"
+                },
+                correctAnswer: "B",
+                rationale: "Reactive arthritis is classically described by the triad of sterile arthritis, urethritis, and conjunctivitis, which typically occurs within four weeks of a primary urogenital (e.g., Chlamydia) or enteropathic (e.g., Salmonella) infection.",
+                source: "'Classically presents with triad of sterile conjunctivitis, sterile urethritis, and sterile arthritis (only 1/3 of patients with reactive arthritis have all 3).' (Inflammatory Arthritides, Slide 40)"
+            },
+            {
+                learningObjective: "LO 2 (Inflammatory Arthritides): Contrast the seronegative spondyloarthropathies based on clinical presentation and associated extra-skeletal manifestations: psoriatic arthritis, reactive arthritis, ankylosing spondylitis and inflammatory bowel disease-associated spondyloarthropathy.",
+                question: "A 45-year-old woman with a history of silver, scaly plaques on her elbows and scalp develops arthritis. Her joint involvement is notable for affecting the distal interphalangeal (DIP) joints, and she has pitting of her fingernails. This combination of skin disease, nail changes, and DIP joint arthritis is most characteristic of:",
+                options: {
+                    A: "Ankylosing spondylitis",
+                    B: "Reactive arthritis",
+                    C: "Psoriatic arthritis",
+                    D: "IBD-associated arthritis"
+                },
+                correctAnswer: "C",
+                rationale: "Psoriatic arthritis is uniquely associated with psoriasis. Nail findings like pitting are common and increase the risk of developing PsA. Arthritis of the DIP joints is a classic pattern of joint involvement in PsA that helps differentiate it from other conditions like rheumatoid arthritis.",
+                source: "'Psoriatic arthritis (PsA): Unique features... Psoriasis... Nail psoriasis: Pitting... Increased risk of PsA with nail psoriasis... Distribution: DIP and PIP joints of the hands and feet...' (Inflammatory Arthritides, Slides 43, 44, 47)"
+            },
+            {
+                learningObjective: "LO 2 (Inflammatory Arthritides): Contrast the seronegative spondyloarthropathies based on clinical presentation and associated extra-skeletal manifestations: psoriatic arthritis, reactive arthritis, ankylosing spondylitis and inflammatory bowel disease-associated spondyloarthropathy.",
+                question: "A 27-year-old man with a 5-year history of inflammatory low back pain undergoes a spinal X-ray. The images show symmetric involvement of the sacroiliac joints, squaring of the vertebral bodies, and marginal syndesmophytes causing fusion of the lumbar spine, described as a \"bamboo spine.\" This pattern of ascending, symmetric spinal involvement is the hallmark of:",
+                options: {
+                    A: "Reactive arthritis",
+                    B: "Psoriatic arthritis",
+                    C: "Diffuse idiopathic skeletal hyperostosis (DISH)",
+                    D: "Ankylosing spondylitis"
+                },
+                correctAnswer: "D",
+                rationale: "Ankylosing spondylitis is characterized by a \"Pattern #1\" axial involvement, which is symmetric and ascending, always involving the sacroiliac joints. The late-stage finding of marginal syndesmophytes leading to spinal fusion (\"bamboo spine\") is classic for this condition.",
+                source: "'Pattern #1: Ankylosing spondylitis... Symmetric involvement of SI joints... Ascending involvement; 100% involvement of SI joints... Marginal syndesmophytes... Late: \"Bamboo spine\".' (Inflammatory Arthritides, Slides 22, 26, 47)"
+            },
+            {
+                learningObjective: "LO 3 (Inflammatory Arthritides): Separate autoimmune from autoinflammatory mechanisms of arthritis pathogenesis.",
+                question: "A patient presents with an acute gouty flare. This condition is characterized by a rapid, stereotyped inflammatory response to monosodium urate crystals. This process is primarily driven by the activation of the innate immune system, specifically the NLRP3 inflammasome, without the involvement of autoantibodies or antigen-specific T-cells. This mechanism is best described as:",
+                options: {
+                    A: "Autoimmune",
+                    B: "Allergic",
+                    C: "Autoinflammatory",
+                    D: "Infectious"
+                },
+                correctAnswer: "C",
+                rationale: "Autoinflammatory diseases are characterized by inappropriate activation of the innate immune system. Gout is a classic example where crystals activate the NLRP3 inflammasome, leading to inflammation that is not explained by infection, malignancy, or the adaptive immune response (autoantibodies/T-cells).",
+                source: "'Autoinflammation: Persistent inflammation not explained by infection, malignancy, or the effects of autoantibodies or antigen-specific T-cells... Inappropriate innate immune system activation... Crystal activates the innate immune system via the NLRP3 inflammasome.' (Inflammatory Arthritides, Slides 51, 52, 55)"
+            },
+            {
+                learningObjective: "LO 3 (Inflammatory Arthritides): Separate autoimmune from autoinflammatory mechanisms of arthritis pathogenesis.",
+                question: "Rheumatoid arthritis is a systemic disease characterized by the presence of high-titer autoantibodies such as rheumatoid factor and anti-CCP, along with antigen-specific T-cells that target joint tissues, leading to loss of self-tolerance. This pathogenesis, driven by the adaptive immune system, classifies rheumatoid arthritis as which type of disease?",
+                options: {
+                    A: "Autoinflammatory",
+                    B: "Autoimmune",
+                    C: "Degenerative",
+                    D: "Infectious"
+                },
+                correctAnswer: "B",
+                rationale: "Autoimmune diseases are defined by a loss of self-tolerance resulting from a response of the adaptive immune system, specifically involving autoantibodies and/or antigen-specific T-cells. Rheumatoid arthritis is a classic example of an autoimmune disease.",
+                source: "'Autoimmunity: Loss of self-tolerance due to autoantibodies or antigen-specific T-cells... Adaptive immunity driven.' (Inflammatory Arthritides, Slides 51, 52)"
+            },
+            {
+                learningObjective: "LO 3 (Inflammatory Arthritides): Separate autoimmune from autoinflammatory mechanisms of arthritis pathogenesis.",
+                question: "Which of the following is a key feature that distinguishes a primary autoinflammatory disorder, such as Behçet disease, from a primary autoimmune disorder, such as systemic lupus erythematosus?",
+                options: {
+                    A: "Predominance in females",
+                    B: "Involvement of the adaptive immune system with specific autoantibodies",
+                    C: "Involvement of the innate immune system without specific autoantibodies",
+                    D: "Response to B-cell depleting therapies"
+                },
+                correctAnswer: "C",
+                rationale: "The fundamental distinction is the branch of the immune system that is primarily dysregulated. Autoinflammatory disorders are driven by the innate immune system and lack high-titer autoantibodies, whereas autoimmune disorders are driven by the adaptive immune system and are characterized by such antibodies.",
+                source: "'Autoinflammation... effects of autoantibodies or antigen-specific T-cells... Inappropriate innate immune system activation. VS. Autoimmunity... Loss of self-tolerance due to autoantibodies or antigen-specific T-cells.' (Inflammatory Arthritides, Slides 51, 52)"
+            },
+            {
+                learningObjective: "LO 4 (Inflammatory Arthritides): Analyze the key differences in the clinical presentation, pathogenesis, and treatment of the two most common crystalline arthropathies: gout and calcium pyrophosphate deposition (CPPD) disease.",
+                question: "A 68-year-old man presents with an acute, painful, swollen knee. A synovial fluid analysis is performed, and polarized light microscopy reveals rhomboid-shaped, weakly positively birefringent crystals. These findings are diagnostic for:",
+                options: {
+                    A: "Gout (monosodium urate crystals)",
+                    B: "Pseudogout (calcium pyrophosphate deposition disease)",
+                    C: "Septic arthritis",
+                    D: "Rheumatoid arthritis"
+                },
+                correctAnswer: "B",
+                rationale: "The key difference in crystal examination between the two main crystalline arthropathies is the crystal morphology and birefringence. Calcium pyrophosphate dihydrate (CPPD) crystals are rhomboid or rod-shaped and exhibit weak positive birefringence.",
+                source: "'Calcium pyrophosphate dihydrate... Rhomboid or rod-shaped... Weakly positive... Calcium Pyrophosphate Deposition Disease (CPPD) (\"pseudogout\").' (Inflammatory Arthritides, Slides 54, 66)"
+            },
+            {
+                learningObjective: "LO 4 (Inflammatory Arthritides): Analyze the key differences in the clinical presentation, pathogenesis, and treatment of the two most common crystalline arthropathies: gout and calcium pyrophosphate deposition (CPPD) disease.",
+                question: "A 55-year-old male presents with his first episode of severe joint pain, which woke him from sleep. The pain is localized to the first metatarsophalangeal (MTP) joint, which is exquisitely tender, red, and swollen. This classic presentation, known as podagra, is the most common initial manifestation of which condition?",
+                options: {
+                    A: "Calcium pyrophosphate deposition (CPPD) disease",
+                    B: "Reactive arthritis",
+                    C: "Gout",
+                    D: "Osteoarthritis"
+                },
+                correctAnswer: "C",
+                rationale: "An acute gout flare frequently presents as a monoarthritis of the lower limb, and the most common joint affected in the first flare (>50%) is the first MTP joint (podagra). In contrast, CPPD disease typically affects the knee or wrist and spares the first MTP.",
+                source: "'Gout... Distribution: ...First MTP (podagra; >50% of first flares).' (Inflammatory Arthritides, Slides 57, 66)"
+            },
+            {
+                learningObjective: "LO 4 (Inflammatory Arthritides): Analyze the key differences in the clinical presentation, pathogenesis, and treatment of the two most common crystalline arthropathies: gout and calcium pyrophosphate deposition (CPPD) disease.",
+                question: "An X-ray of the wrist is taken for a 75-year-old patient with arthritis. The image reveals linear calcifications within the cartilage of the triangular fibrocartilage complex (TFCC). This radiographic finding, known as chondrocalcinosis, is the hallmark of which crystalline arthropathy?",
+                options: {
+                    A: "Gout",
+                    B: "Calcium pyrophosphate deposition (CPPD) disease",
+                    C: "Osteoarthritis",
+                    D: "Psoriatic arthritis"
+                },
+                correctAnswer: "B",
+                rationale: "The deposition of CPPD crystals in articular cartilage leads to cartilage calcification, which is visible on X-ray as chondrocalcinosis. This is the supportive radiographic finding for CPPD disease, whereas gout is characterized by \"rat-bite\" erosions.",
+                source: "'CPPD on imaging: Chondrocalcinosis (arrows) in CPPD... Supportive findings [CPPD]: Chondrocalcinosis (cartilage calcification).' (Inflammatory Arthritides, Slides 65, 66)"
+            },
+            // Non-immune Mediated MSK Pain Syndromes Questions
+            {
+                learningObjective: "LO 1 (Non-immune Mediated MSK Pain Syndromes): Specify the genetic defects in the most common heritable connective tissue diseases and how these defects translate into their respective musculoskeletal and non-musculoskeletal phenotypes: Osteogenesis Imperfecta, Marfan syndrome and Ehlers-Danlos syndrome.",
+                question: "A 21-year-old male presents with a history of recurrent shoulder dislocations and generalized joint pain. On examination, he demonstrates marked joint hypermobility and skin hyperextensibility. He also has wide, atrophic, \"cigarette paper\" scars over his knees. These features are most consistent with Classical Ehlers-Danlos Syndrome, which is caused by a genetic defect in which type of collagen?",
+                options: {
+                    A: "Type I Collagen",
+                    B: "Type II Collagen",
+                    C: "Type III Collagen",
+                    D: "Type V Collagen"
+                },
+                correctAnswer: "D",
+                rationale: "Classical Ehlers-Danlos Syndrome (cEDS) is an autosomal dominant disorder characterized by marked joint hypermobility, skin hyperextensibility, and atrophic scarring. It is caused by mutations in genes (COL5A1 or COL5A2) that encode for Type V collagen.",
+                source: "'Classical EDS... Gene affected: COL5A1; COL5A2, Connective tissue component affected: Type V collagen... Autosomal dominant inheritance from defect in Type V collagen (COL5A1 or COL5A2 gene).' (Non-immune Mediated MSK Pain Syndromes, Slides 9, 12, 27)"
+            },
+            {
+                learningObjective: "LO 1 (Non-immune Mediated MSK Pain Syndromes): Specify the genetic defects in the most common heritable connective tissue diseases and how these defects translate into their respective musculoskeletal and non-musculoskeletal phenotypes: Osteogenesis Imperfecta, Marfan syndrome and Ehlers-Danlos syndrome.",
+                question: "A 17-year-old male who is exceptionally tall with long limbs and arachnodactyly is evaluated for a connective tissue disorder. An ophthalmologic exam reveals upward ectopia lentis. Cardiovascular imaging shows dilation of the aortic root. These findings are hallmarks of Marfan syndrome. This condition is caused by an autosomal dominant mutation in the FBN1 gene, which encodes for which extracellular matrix protein?",
+                options: {
+                    A: "Collagen Type I",
+                    B: "Collagen Type III",
+                    C: "Elastin",
+                    D: "Fibrillin-1"
+                },
+                correctAnswer: "D",
+                rationale: "Marfan syndrome is a systemic connective tissue disease caused by an autosomal dominant mutation in the FBN1 gene on chromosome 15. This gene encodes for fibrillin-1, a crucial component of microfibrils that provide structural integrity and regulate TGF-β signaling.",
+                source: "'Marfan syndrome... Autosomal dominant genetic mutation in Fibrillin-1 (FBN1) gene on chromosome 15 encoding for fibrillin-1 protein.' (Non-immune Mediated MSK Pain Syndromes, Slides 22, 23, 27)"
+            },
+            {
+                learningObjective: "LO 1 (Non-immune Mediated MSK Pain Syndromes): Specify the genetic defects in the most common heritable connective tissue diseases and how these defects translate into their respective musculoskeletal and non-musculoskeletal phenotypes: Osteogenesis Imperfecta, Marfan syndrome and Ehlers-Danlos syndrome.",
+                question: "A 30-year-old woman presents to the emergency department with a spontaneous sigmoid colon rupture. She has a history of easy and extensive bruising. Her physical exam is notable for thin, translucent skin with a prominent venous pattern but no significant joint hypermobility or skin hyperextensibility. This life-threatening presentation is most characteristic of Vascular Ehlers-Danlos Syndrome, which is caused by a defect in which type of collagen?",
+                options: {
+                    A: "Type I Collagen",
+                    B: "Type III Collagen",
+                    C: "Type V Collagen",
+                    D: "Type XII Collagen"
+                },
+                correctAnswer: "B",
+                rationale: "Vascular Ehlers-Danlos Syndrome (vEDS) is the most severe form, characterized by arterial, uterine, and intestinal fragility and rupture. It is caused by an autosomal dominant defect in the COL3A1 gene, which codes for Type III collagen, a major component of hollow organs and blood vessels. Notably, patients typically lack the significant joint and skin laxity seen in other types.",
+                source: "'Vascular EDS... Gene affected: COL3A1, Connective tissue component affected: Type III collagen... Clinical features:... Rupture of uterus or bowel (sigmoid colon)... No hyperelastic skin... Minor to no joint hypermobility.' (Non-immune Mediated MSK Pain Syndromes, Slides 9, 18, 27)"
+            },
+            {
+                learningObjective: "LO 2 (Non-immune Mediated MSK Pain Syndromes): Describe the common clinical features, typical comorbidities, and possible triggers of fibromyalgia.",
+                question: "A 45-year-old woman complains of \"hurting all over\" for the past year. She also reports profound fatigue, waking up feeling unrefreshed, and difficulty with concentration, which she describes as \"brain fog.\" On physical exam, she has diffuse tenderness to palpation over both articular and non-articular areas. Laboratory tests, including inflammatory markers and autoantibodies, are normal. Which diagnosis best fits this clinical picture?",
+                options: {
+                    A: "Rheumatoid arthritis",
+                    B: "Polymyalgia rheumatica",
+                    C: "Fibromyalgia",
+                    D: "Systemic lupus erythematosus"
+                },
+                correctAnswer: "C",
+                rationale: "The cardinal features of fibromyalgia are chronic widespread pain, fatigue, and sleep alterations (including non-restorative sleep). Cognitive dysfunction (\"brain fog\") and diffuse tenderness on exam are also key features. The diagnosis is clinical, made in the absence of inflammatory markers or other explanatory conditions.",
+                source: "'Cardinal features are chronic widespread pain, fatigue and sleep alterations... Widespread pain... Fatigue and sleep alterations... 'Brain fog' (difficulty concentration, memory difficulties, cognitive dysfunction)... Diffuse tenderness to palpation on exam, both articular and non-articular.' (Non-immune Mediated MSK Pain Syndromes, Slides 31, 32, 39)"
+            },
+            {
+                learningObjective: "LO 2 (Non-immune Mediated MSK Pain Syndromes): Describe the common clinical features, typical comorbidities, and possible triggers of fibromyalgia.",
+                question: "The underlying pathophysiology of fibromyalgia is not fully understood but is thought to involve abnormal central pain processing. This phenomenon, which leads to an increased responsiveness of pain-sensing neurons to non-painful stimuli, is known as:",
+                options: {
+                    A: "Peripheral sensitization",
+                    B: "Central sensitization",
+                    C: "Nociceptive pain",
+                    D: "Neuropathic deafferentation"
+                },
+                correctAnswer: "B",
+                rationale: "Fibromyalgia is considered a disorder of central sensitization, where the central nervous system becomes amplified in its response to sensory input. This leads to hyperalgesia (increased pain from a painful stimulus) and allodynia (pain from a stimulus that does not normally provoke pain).",
+                source: "'Abnormal central pain processing secondary to central sensitization. Increased responsiveness of nociceptive (pain sensing) neurons in the central nervous system to their normal or previously non-painful input (allodynia).' (Non-immune Mediated MSK Pain Syndromes, Slide 34)"
+            },
+            {
+                learningObjective: "LO 2 (Non-immune Mediated MSK Pain Syndromes): Describe the common clinical features, typical comorbidities, and possible triggers of fibromyalgia.",
+                question: "A 38-year-old woman with a new diagnosis of fibromyalgia is discussing her treatment options. Her physician emphasizes that the primary and most effective treatment is nonpharmacologic. Which of the following represents the primary treatment modality for fibromyalgia?",
+                options: {
+                    A: "Opioid analgesics",
+                    B: "Nonsteroidal anti-inflammatory drugs (NSAIDs)",
+                    C: "Aerobic exercise",
+                    D: "High-dose glucocorticoids"
+                },
+                correctAnswer: "C",
+                rationale: "The primary treatment for fibromyalgia is nonpharmacologic, centered around patient education, fitness (especially aerobic exercise), and cognitive behavioral therapy. Medications like neuromodulators are considered second-line, adjuvant therapies, while opioids and NSAIDs are not recommended.",
+                source: "'The primary treatment of fibromyalgia is nonpharmacologic... Aerobic exercise... When medications are used as adjuvants to treat fibromyalgia, the effective medicines are neuromodulators. Do not use opioids or NSAIDs.' (Non-immune Mediated MSK Pain Syndromes, Slides 38, 39)"
+            },
+            {
+                learningObjective: "LO 3 (Non-immune Mediated MSK Pain Syndromes): Differentiate complex regional pain syndrome clinical and imaging features from those of an inflammatory arthritis.",
+                question: "A 55-year-old woman develops severe burning pain, swelling, and red discoloration of her left hand two months after a minor wrist sprain. The pain is out of proportion to the initial injury and is associated with increased sweating of the hand. These symptoms are most characteristic of which condition?",
+                options: {
+                    A: "Rheumatoid arthritis",
+                    B: "Septic arthritis",
+                    C: "Gout",
+                    D: "Complex regional pain syndrome (CRPS)"
+                },
+                correctAnswer: "D",
+                rationale: "CRPS is a syndrome characterized by the onset of persistent pain in a single extremity, typically following a minor trauma or surgery. Key features include allodynia, hyperalgesia, and vasomotor signs like swelling, temperature changes, and sweating (hyperhidrosis).",
+                source: "'A syndrome typically occurring in a single extremity following minor trauma and characterized by allodynia, hyperalgesia, and vasomotor signs... Look for onset of persistent pain in a single extremity following a trauma or surgery to that extremity...' (Non-immune Mediated MSK Pain Syndromes, Slides 40, 45)"
+            },
+            {
+                learningObjective: "LO 3 (Non-immune Mediated MSK Pain Syndromes): Differentiate complex regional pain syndrome clinical and imaging features from those of an inflammatory arthritis.",
+                question: "A key differentiating feature between the pain of Complex Regional Pain Syndrome (CRPS) and a typical inflammatory arthritis like rheumatoid arthritis is that in CRPS, the pain and associated symptoms:",
+                options: {
+                    A: "Are strictly confined to the synovial lining of the joint.",
+                    B: "Spread diffusely on the affected extremity beyond the initial site of injury.",
+                    C: "Are always symmetric, affecting the contralateral limb.",
+                    D: "Respond rapidly and completely to NSAID therapy."
+                },
+                correctAnswer: "B",
+                rationale: "The pain and other sensory, motor, and autonomic features of CRPS are not confined to a single joint or nerve distribution. A hallmark feature is the spreading of symptoms diffusely throughout the affected limb, beyond the original location of the trauma.",
+                source: "'(Pain) spreads diffusely on affected extremity beyond joint/site of initial injury.' (Non-immune Mediated MSK Pain Syndromes, Slide 42)"
+            },
+            {
+                learningObjective: "LO 3 (Non-immune Mediated MSK Pain Syndromes): Differentiate complex regional pain syndrome clinical and imaging features from those of an inflammatory arthritis.",
+                question: "A patient has had symptoms of CRPS in their right foot for several years. An X-ray is performed to evaluate for long-term changes. Which of the following radiographic findings is characteristic of the atrophic (late) phase of CRPS?",
+                options: {
+                    A: "Symmetric joint space narrowing",
+                    B: "Marginal erosions",
+                    C: "Patchy osteoporosis",
+                    D: "Large osteophyte formation"
+                },
+                correctAnswer: "C",
+                rationale: "While early phases may have normal imaging, the late (atrophic) phase of CRPS is characterized by significant bone demineralization, which appears on X-ray as patchy osteoporosis. This is distinct from the erosions of RA or the osteophytes of OA.",
+                source: "'Atrophic phase (years)... X-ray: patchy osteoporosis... Complications of CRPS... include... Patchy osteoporosis (bone demineralization).' (Non-immune Mediated MSK Pain Syndromes, Slides 43, 45)"
+            },
+            // Non-inflammatory Joint Disease Questions
+            {
+                learningObjective: "LO 1 (Non-inflammatory Joint Disease): Summarize natural history of cartilage injury & describe factors that may lead to the progression of disease.",
+                question: "A 58-year-old woman with a remote history of a significant left knee injury in her teens presents with several years of progressive knee pain. She was never treated for the initial injury. Her current symptoms are consistent with osteoarthritis. This case illustrates that which of the following is a major factor that can lead to the development and progression of degenerative joint disease?",
+                options: {
+                    A: "Autoimmune dysfunction",
+                    B: "Systemic inflammation",
+                    C: "Genetic skeletal dysplasia",
+                    D: "Trauma"
+                },
+                correctAnswer: "D",
+                rationale: "Degenerative joint disease (osteoarthritis) is often initiated by a cartilage injury. Trauma is one of the primary causes of such an injury, which can disrupt the normal biomechanics of the joint and lead to progressive degeneration over time.",
+                source: "'Degenerative Joint Disease Starts with Cartilage Injury... Trauma... 58 y/o F w/ remote L knee injury in her teens, no treatment sought after injury, presents with several year history of increasing knee pain... Dx: Osteoarthritis.' (Non-inflammatory Joint Disease, Slides 5, 11)"
+            },
+            {
+                learningObjective: "LO 1 (Non-inflammatory Joint Disease): Summarize natural history of cartilage injury & describe factors that may lead to the progression of disease.",
+                question: "The progressive destruction of articular cartilage in osteoarthritis ultimately leads to joint stiffness and loss of motion. The end-stage natural history of this process, where the joint becomes stiff or fused as a response to damage, is known as:",
+                options: {
+                    A: "Subluxation",
+                    B: "Ankylosis",
+                    C: "Dislocation",
+                    D: "Malalignment"
+                },
+                correctAnswer: "B",
+                rationale: "The body's natural response to severe joint damage is to limit motion to reduce pain. The end stage of this process in osteoarthritis is ankylosis, which is the stiffening or fusion of the joint. The goal of treatment is to interrupt this natural history.",
+                source: "'The formation of arthritis and ankylosis (stiffness) is the joint's response to damage... The natural history of osteoarthritis is an ankylosed or fused joint.' (Non-inflammatory Joint Disease, Slide 9)"
+            },
+            {
+                learningObjective: "LO 1 (Non-inflammatory Joint Disease): Summarize natural history of cartilage injury & describe factors that may lead to the progression of disease.",
+                question: "A 42-year-old female presents with bilateral knee pain that has progressively worsened without any specific injury. Radiographs show varus malalignment. Malalignment is a significant factor in the progression of osteoarthritis because it:",
+                options: {
+                    A: "Causes a systemic inflammatory response.",
+                    B: "Leads to an \"unbalanced\" joint with abnormal mechanical forces.",
+                    C: "Triggers a genetic defect in collagen synthesis.",
+                    D: "Increases the risk of ligamentous injury."
+                },
+                correctAnswer: "B",
+                rationale: "Malalignment, such as varus (\"bow-legged\") or valgus (\"knock-kneed\") deformity, alters the normal biomechanics of a joint. This creates an \"unbalanced\" distribution of weightbearing forces, leading to focal overload of cartilage in one compartment and accelerating degenerative changes.",
+                source: "'Malalignment... Varus/Valgus Alignment... Joint is \"unbalanced\"' (Non-inflammatory Joint Disease, Slide 7)"
+            },
+            {
+                learningObjective: "LO 2 (Non-inflammatory Joint Disease): Compare & Contrast OCD and articular cartilage injuries.",
+                question: "A 14-year-old basketball player presents with a several-month history of insidious, poorly localized knee pain that is worse with activity. An X-ray reveals a characteristic lesion of the articular cartilage and the underlying bone. In contrast, an acute articular cartilage defect would most likely present with:",
+                options: {
+                    A: "A similar insidious onset.",
+                    B: "No associated swelling or effusion.",
+                    C: "A clear history of a traumatic event.",
+                    D: "Bilateral symmetric findings."
+                },
+                correctAnswer: "C",
+                rationale: "A key differentiating feature is the onset. Osteochondritis dissecans (OCD) lesions are typically atraumatic with an insidious onset, whereas articular cartilage defects are the direct result of an acute traumatic injury.",
+                source: "'OCD Lesions: Atraumatic, Insidious onset of pain... Articular Cartilage Defects: Traumatic, No antecedent pain before immediate onset.' (Non-inflammatory Joint Disease, Slide 34)"
+            },
+            {
+                learningObjective: "LO 2 (Non-inflammatory Joint Disease): Compare & Contrast OCD and articular cartilage injuries.",
+                question: "Which of the following statements best defines an osteochondritis dissecans (OCD) lesion?",
+                options: {
+                    A: "A degenerative fraying of articular cartilage only.",
+                    B: "A pathologic lesion involving both the articular cartilage and the subchondral bone.",
+                    C: "A reactive bony overgrowth at the joint margin (osteophyte).",
+                    D: "An inflammatory condition of the synovial lining."
+                },
+                correctAnswer: "B",
+                rationale: "By definition, OCD is a focal lesion that involves not only the articular cartilage but also the segment of subchondral bone directly beneath it. This differentiates it from a pure articular cartilage defect, which does not involve the underlying bone.",
+                source: "'OsteoChondritis Dissecans (OCD)... Definition: A pathologic lesion of articular cartilage and subchondral bone.' (Non-inflammatory Joint Disease, Slide 24)"
+            },
+            {
+                learningObjective: "LO 2 (Non-inflammatory Joint Disease): Compare & Contrast OCD and articular cartilage injuries.",
+                question: "A 16-year-old soccer player sustains a twisting injury to his knee and presents with immediate pain and a large effusion. An MRI confirms a full-thickness articular cartilage defect. In contrast to a patient with an OCD lesion, this patient's physical exam would most likely reveal:",
+                options: {
+                    A: "A benign, non-focal examination.",
+                    B: "No effusion or joint swelling.",
+                    C: "Focal pain and a significant effusion.",
+                    D: "Gradual loss of range of motion over months."
+                },
+                correctAnswer: "C",
+                rationale: "An acute traumatic articular cartilage defect typically presents with obvious signs of injury, including a significant joint effusion (swelling) and focal tenderness on examination. In contrast, the physical exam for an OCD lesion is often more benign and non-focal.",
+                source: "'Articular Cartilage Defects... Obvious pain and swelling on physical exam... Physical exam with focal pain and effusion (joint swelling).' (Non-inflammatory Joint Disease, Slides 32, 34)"
+            },
+            {
+                learningObjective: "LO 3 (Non-inflammatory Joint Disease): Discuss non-op & operative interventions for OCD & articular cartilage injuries.",
+                question: "A 12-year-old gymnast with open growth plates is diagnosed with a stable osteochondritis dissecans (OCD) lesion of the knee. What is the most appropriate initial management for this patient?",
+                options: {
+                    A: "Immediate surgical fixation.",
+                    B: "Non-operative treatment with restricted weightbearing and bracing.",
+                    C: "Intra-articular steroid injection.",
+                    D: "Arthroscopic debridement."
+                },
+                correctAnswer: "B",
+                rationale: "Non-operative management is the first-line treatment for stable OCD lesions in skeletally immature patients (pre-pubescent with open growth plates). This allows for the potential for spontaneous healing. Surgery is reserved for unstable lesions or failure of non-operative care.",
+                source: "'Non-Operative Treatment - OCD... Pre-pubescent patients with stable OCD lesion... Non-weightbearing followed by repeat imaging and physical examination... Non-op (restricted WB & Bracing): Stable lesion, children with open growth plates.' (Non-inflammatory Joint Disease, Slides 35, 36)"
+            },
+            {
+                learningObjective: "LO 3 (Non-inflammatory Joint Disease): Discuss non-op & operative interventions for OCD & articular cartilage injuries.",
+                question: "A surgeon is treating a large (>3 cm) articular cartilage defect in a young adult. Which surgical procedure involves transplanting a graft of cartilage and bone from a cadaveric donor?",
+                options: {
+                    A: "Microfracture and debridement",
+                    B: "Osteochondral Autograft Transplantation (OATS)",
+                    C: "Osteochondral Allograft Transplantation (OCA)",
+                    D: "Fixation with bioabsorbable screws"
+                },
+                correctAnswer: "C",
+                rationale: "Osteochondral allograft (from a donor) transplantation is used for larger cartilage defects, typically those greater than 2-3 cm. This contrasts with an autograft (OATS), where smaller plugs of the patient's own cartilage and bone are used, which is suitable for smaller defects.",
+                source: "'Surgical Treatment – Osteochondral Grafting... Osteochondral Allograft Transplantation (OCA): >2-3 cm.' (Non-inflammatory Joint Disease, Slide 42)"
+            },
+            {
+                learningObjective: "LO 3 (Non-inflammatory Joint Disease): Discuss non-op & operative interventions for OCD & articular cartilage injuries.",
+                question: "According to the treatment algorithm for osteoarthritis, what is the initial, first-line management that should always be started before considering more invasive options?",
+                options: {
+                    A: "Surgical joint replacement.",
+                    B: "Intra-articular steroid injections.",
+                    C: "Non-operative modalities like activity modification and physiotherapy.",
+                    D: "Opioid pain medication."
+                },
+                correctAnswer: "C",
+                rationale: "The treatment of osteoarthritis should always begin with non-operative measures. The first step in the algorithm includes activity modification, physical therapy, weight loss, and NSAIDs if appropriate. Injections and surgery are reserved for later stages if initial treatment fails.",
+                source: "'Non-Operative Treatment – Osteoarthritis... Treatment should always start with non-operative modalities. Treatment Algorithm: 1st: Activity modifications, physiotherapy, weightloss, NSAIDs if appropriate.' (Non-inflammatory Joint Disease, Slide 37)"
+            },
+            {
+                learningObjective: "LO 4 (Non-inflammatory Joint Disease): Describe appropriate utilization of medical imaging in diagnosis.",
+                question: "A 17-year-old year-round basketball player presents with chronic knee pain and a joint effusion. According to the guidelines for appropriate imaging utilization, the presence of a joint effusion in this type of patient is considered a \"red flag\" that warrants which initial imaging study?",
+                options: {
+                    A: "MRI without contrast",
+                    B: "CT scan",
+                    C: "Screening X-ray",
+                    D: "Ultrasound"
+                },
+                correctAnswer: "C",
+                rationale: "For a younger patient with a history or physical exam concerning for joint damage, such as a joint effusion or mechanical symptoms, a screening X-ray is the appropriate first step in the imaging workup.",
+                source: "'Younger patients who have a history or physical exam concerning for joint damage should receive a screening Xray. Red Flags***: Joint Effusion (Fluid inside the joint)...' (Non-inflammatory Joint Disease, Slide 46)"
+            },
+            {
+                learningObjective: "LO 4 (Non-inflammatory Joint Disease): Describe appropriate utilization of medical imaging in diagnosis.",
+                question: "An MRI of the knee is ordered for a 65-year-old patient with long-standing, radiographically confirmed osteoarthritis. What is the primary indication for obtaining an MRI in this patient population?",
+                options: {
+                    A: "To confirm the diagnosis of osteoarthritis.",
+                    B: "To assess for early cartilage softening.",
+                    C: "The presence of mechanical locking of the joint.",
+                    D: "To screen for bone tumors."
+                },
+                correctAnswer: "C",
+                rationale: "There is no indication to order an MRI for a patient with osteoarthritis simply to confirm the diagnosis or assess cartilage wear, as X-rays are sufficient. The primary indication is to evaluate for a mechanical cause of locking, such as a loose body or meniscal tear, which may be contributing to the patient's symptoms.",
+                source: "'Osteoarthritis patients with mechanical locking of the joint. There is no indication to order an MRI for a patient with osteoarthritis who does not have mechanical locking of the joint!' (Non-inflammatory Joint Disease, Slide 47)"
+            },
+            {
+                learningObjective: "LO 4 (Non-inflammatory Joint Disease): Describe appropriate utilization of medical imaging in diagnosis.",
+                question: "A patient presents to the emergency department with an acute, traumatic articular cartilage defect after a sports injury. The physical exam reveals obvious pain and swelling. Which of the following is a possible finding on an initial X-ray of the joint?",
+                options: {
+                    A: "The X-ray may appear normal.",
+                    B: "The X-ray will always show joint space narrowing.",
+                    C: "The X-ray will demonstrate an OCD lesion.",
+                    D: "The X-ray will show subchondral cysts."
+                },
+                correctAnswer: "A",
+                rationale: "Purely chondral (cartilage) injuries are not visible on plain radiographs. Therefore, a patient with an acute articular cartilage defect may have a completely normal X-ray, as the damage is confined to the soft tissue cartilage surface and does not yet involve the bone.",
+                source: "'Articular Cartilage Defect... May have a normal Xray.' (Non-inflammatory Joint Disease, Slide 32)"
+            },
+            // Pharmacotherapy of Pain Questions
+            {
+                learningObjective: "LO 1 (Pharmacotherapy of Pain): Discuss the assessment of pain.",
+                question: "A nurse is performing a pain assessment on a new patient using the 'SOCRATES' mnemonic. The patient describes the pain as a 'stabbing' sensation. This information corresponds to which component of the assessment?",
+                options: {
+                    A: "Site",
+                    B: "Onset",
+                    C: "Character",
+                    D: "Radiation"
+                },
+                correctAnswer: "C",
+                rationale: "The 'Character' component of the SOCRATES pain assessment prompts the clinician to ask what the pain feels like, such as an ache, stabbing, burning, etc.",
+                source: "'Character – What is the pain like? An ache? Stabbing?' (Pharmacotherapy of Pain, Slide 4)"
+            },
+            {
+                learningObjective: "LO 1 (Pharmacotherapy of Pain): Discuss the assessment of pain.",
+                question: "A physician is evaluating a post-operative patient who is sleeping soundly. The patient's vital signs are stable. Based on these observations, which of the following is an incorrect assumption regarding the patient's pain status?",
+                options: {
+                    A: "The patient's pain is well-controlled.",
+                    B: "The patient does not have pain because they are sleeping.",
+                    C: "The patient may require a re-assessment of pain upon waking.",
+                    D: "Stable vital signs do not rule out the presence of significant pain."
+                },
+                correctAnswer: "B",
+                rationale: "Pain assessment should not be based on assumptions. Assuming a sleeping patient is pain-free is a common pitfall; patients in pain may sleep from exhaustion. Similarly, relying on vital signs or how a patient 'looks' are not reliable methods for assessing the subjective experience of pain.",
+                source: "'Pain assessment is NOT... Relying on changes in vital signs... Deciding a patient does not \"look in pain\"... Assuming a sleeping patient does not have pain.' (Pharmacotherapy of Pain, Slide 7)"
+            },
+            {
+                learningObjective: "LO 1 (Pharmacotherapy of Pain): Discuss the assessment of pain.",
+                question: "A 6-year-old child is in the post-anesthesia care unit following a tonsillectomy. The nurse needs to assess his pain level. Which pain scale would be most appropriate for this patient?",
+                options: {
+                    A: "Numeric Rating Scale (0-10)",
+                    B: "Visual Analog Scale (VAS)",
+                    C: "Wong-Baker FACES® Pain Rating Scale",
+                    D: "McGill Pain Questionnaire"
+                },
+                correctAnswer: "C",
+                rationale: "The Wong-Baker FACES® scale is designed for use in children (as young as 3 years old) and patients who may have difficulty quantifying their pain numerically. It uses a series of faces showing increasing levels of distress to help the patient communicate their pain level.",
+                source: "(Image of) 'Wong-Baker FACES® Pain Rating Scale' with faces corresponding to pain levels from 'No Hurt' to 'Hurts Worst.' (Pharmacotherapy of Pain, Slide 5)"
+            },
+            {
+                learningObjective: "LO 2 (Pharmacotherapy of Pain): Differentiate between acute and chronic pain.",
+                question: "A patient has been experiencing low back pain for 8 months. The pain has an unknown etiology, and the treatment goal has shifted from cure to improving the patient's ability to perform daily activities. This clinical picture is most consistent with which type of pain?",
+                options: {
+                    A: "Acute pain",
+                    B: "Nociceptive pain",
+                    C: "Chronic pain",
+                    D: "Neuropathic pain"
+                },
+                correctAnswer: "C",
+                rationale: "Chronic pain is defined by its persistence for months to years (typically >3-6 months), often has an unknown etiology, and the treatment goal shifts from cure to improving functionality.",
+                source: "'Chronic Pain... Pain persists for months to years. Exact etiology is often unknown... Treatment goal: Functionality.' (Pharmacotherapy of Pain, Slides 8, 9)"
+            },
+            {
+                learningObjective: "LO 2 (Pharmacotherapy of Pain): Differentiate between acute and chronic pain.",
+                question: "Which of the following characteristics is more typically associated with acute pain rather than chronic pain?",
+                options: {
+                    A: "An identifiable cause",
+                    B: "The presence of depression",
+                    C: "The development of tolerance to medication",
+                    D: "A treatment goal of improving functionality"
+                },
+                correctAnswer: "A",
+                rationale: "Acute pain is usually a useful physiologic process that warns of tissue injury and typically has a clear, identifiable cause. Chronic pain, in contrast, often persists long after the initial injury has healed and may have an unknown etiology.",
+                source: "'Acute Pain... Identifiable cause... Chronic Pain... Exact etiology is often unknown.' (Pharmacotherapy of Pain, Slides 8, 9)"
+            },
+            {
+                learningObjective: "LO 2 (Pharmacotherapy of Pain): Differentiate between acute and chronic pain.",
+                question: "A patient with chronic noncancer pain is being evaluated. Which of the following is a common feature associated with chronic pain that is usually not present in acute pain?",
+                options: {
+                    A: "A highly desirable relief of pain",
+                    B: "A major psychological component",
+                    C: "An obvious organic cause",
+                    D: "An uncommon occurrence of insomnia"
+                },
+                correctAnswer: "B",
+                rationale: "While a psychological response is present in both types of pain, it often becomes a major, complicating problem in chronic pain, contributing to conditions like depression and anxiety. This is typically not the case in self-limited acute pain.",
+                source: "'Characteristic: Psychological component. Acute Pain: Usually not present. Chronic Pain: Often a major problem.' (Pharmacotherapy of Pain, Slide 9)"
+            },
+            {
+                learningObjective: "LO 3 (Pharmacotherapy of Pain): Interpret patient selection considerations for acute and chronic pain.",
+                question: "A 75-year-old man with dementia residing in a nursing home has become more agitated and has decreased his oral intake. The staff is concerned about underlying pain. Which sign would be most indicative of acute pain in this special population?",
+                options: {
+                    A: "Stable heart rate and blood pressure",
+                    B: "Increased verbalization of comfort",
+                    C: "Facial grimacing",
+                    D: "Normal sleep patterns"
+                },
+                correctAnswer: "C",
+                rationale: "In non-verbal or cognitively impaired populations, such as adults with dementia, pain is often manifested through non-verbal cues. Obvious signs of distress can include changes in eating habits, increased agitation, and facial grimacing.",
+                source: "'Special populations: ... Adults with dementia: changes in eating habits, increased agitation, facial grimacing.' (Pharmacotherapy of Pain, Slide 10)"
+            },
+            {
+                learningObjective: "LO 3 (Pharmacotherapy of Pain): Interpret patient selection considerations for acute and chronic pain.",
+                question: "A physician is initiating long-term opioid therapy for a patient with non-cancer chronic pain. To establish clear expectations and mitigate the risk of misuse, what is a crucial step to take when prescribing for 90 or more consecutive days?",
+                options: {
+                    A: "Obtain a written agreement with the patient.",
+                    B: "Discontinue all other analgesic medications.",
+                    C: "Schedule follow-up appointments annually.",
+                    D: "Avoid the use of a Prescription Drug Monitoring Program (PDMP)."
+                },
+                correctAnswer: "A",
+                rationale: "For long-term opioid therapy (≥90 days) for non-cancer pain, it is standard practice and often a requirement to obtain a written agreement or 'pain contract.' This document outlines the risks, benefits, and rules of the therapy to ensure a mutual understanding between the provider and patient.",
+                source: "'For ≥90 consecutive days for non-terminal/non-cancer... Obtain a written agreement with patient.' (Pharmacotherapy of Pain, Slide 28)"
+            },
+            {
+                learningObjective: "LO 3 (Pharmacotherapy of Pain): Interpret patient selection considerations for acute and chronic pain.",
+                question: "A patient with rheumatoid arthritis and a history of salicylate allergy requires pain relief. Which of the following medications would be contraindicated?",
+                options: {
+                    A: "Acetaminophen",
+                    B: "Ibuprofen",
+                    C: "Naproxen",
+                    D: "Aspirin"
+                },
+                correctAnswer: "D",
+                rationale: "Salicylates are the chemical class to which aspirin belongs. A history of a salicylate allergy is a direct contraindication to the use of aspirin. While cross-reactivity can occur with other NSAIDs, it is an absolute contraindication for aspirin.",
+                source: "'Aspirin... CI in patients with salicylate allergy.' (Pharmacotherapy of Pain, Slide 15)"
+            },
+            {
+                learningObjective: "LO 4 (Pharmacotherapy of Pain): Discuss considerations for local analgesia and peripheral neuropathy.",
+                question: "A patient receives a peripheral nerve block with lidocaine. The analgesic effect of this local anesthetic is achieved by blocking which of the following ion channels, thereby preventing nerve depolarization?",
+                options: {
+                    A: "Potassium channels",
+                    B: "Calcium channels",
+                    C: "Sodium channels",
+                    D: "Chloride channels"
+                },
+                correctAnswer: "C",
+                rationale: "Local anesthetics work by blocking voltage-gated sodium channels on the inside of the nerve cell membrane. This action prevents the influx of sodium that is necessary for the generation and propagation of an action potential, thus blocking nerve conduction.",
+                source: "(Diagram shows) 'Local anesthetic blockade of sodium ion channel. No impulse conduction.' (Pharmacotherapy of Pain, Slide 16)"
+            },
+            {
+                learningObjective: "LO 4 (Pharmacotherapy of Pain): Discuss considerations for local analgesia and peripheral neuropathy.",
+                question: "A 55-year-old woman with diabetic peripheral neuropathy is started on amitriptyline. Besides its use as an antidepressant, this medication is effective for neuropathic pain. Amitriptyline is considered a first-line therapy for this condition and belongs to which drug class?",
+                options: {
+                    A: "Selective serotonin reuptake inhibitor (SSRI)",
+                    B: "Serotonin-norepinephrine reuptake inhibitor (SNRI)",
+                    C: "Tricyclic antidepressant (TCA)",
+                    D: "Monoamine oxidase inhibitor (MAOI)"
+                },
+                correctAnswer: "C",
+                rationale: "Tricyclic antidepressants (TCAs), such as amitriptyline, are a first-line treatment for peripheral neuropathy. They are thought to work by modulating norepinephrine and serotonin pathways in the central nervous system to reduce pain signals.",
+                source: "'Amitriptyline: Generally 1st line for TCAs; anticholinergic and sedative side effects; also used in fibromyalgia.' (Pharmacotherapy of Pain, Slide 41)"
+            },
+            {
+                learningObjective: "LO 4 (Pharmacotherapy of Pain): Discuss considerations for local analgesia and peripheral neuropathy.",
+                question: "A patient undergoing an epidural procedure receives an accidental intravascular injection of bupivacaine, leading to high plasma concentrations. This can cause severe systemic toxicity. Which of the following is a sign of Central Nervous System (CNS) toxicity from local anesthetics?",
+                options: {
+                    A: "Hypertension",
+                    B: "Seizures",
+                    C: "Hyperthermia",
+                    D: "Miosis"
+                },
+                correctAnswer: "B",
+                rationale: "Elevated plasma concentrations of local anesthetics can cause significant CNS toxicity, which initially presents as excitation (dizziness, tinnitus, muscle twitching) and can progress to more severe effects like seizures, respiratory arrest, and coma.",
+                source: "'Elevated plasma concentrations of local anesthetics can cause: CNS excitation and depression... Seizures.' (Pharmacotherapy of Pain, Slide 17)"
+            },
+            {
+                learningObjective: "LO 5 (Pharmacotherapy of Pain): Apply the pain ladder to patient vignettes and select the most appropriate drug therapy.",
+                question: "A 20-year-old man presents with low back pain and stiffness consistent with ankylosing spondylitis. His pain is moderate, and he is seeking initial pharmacologic therapy. According to the WHO 3-step ladder, what would be an appropriate medication to begin?",
+                options: {
+                    A: "Morphine",
+                    B: "Codeine with acetaminophen",
+                    C: "Ibuprofen",
+                    D: "Fentanyl patch"
+                },
+                correctAnswer: "C",
+                rationale: "For mild to moderate pain, the first step of the WHO ladder involves using non-opioids, which include NSAIDs like ibuprofen, acetaminophen, and adjuvants. Strong opioids are reserved for severe pain.",
+                source: "'World Health Organization 3-Step ladder... Non-opioids include NSAIDs, acetaminophen... (Bottom of ladder) Pain -> Nonopioid +/- Adjuvant.' The case example on slide 45 confirms Ibuprofen as the correct choice for this patient. (Pharmacotherapy of Pain, Slides 42, 45)"
+            },
+            {
+                learningObjective: "LO 5 (Pharmacotherapy of Pain): Apply the pain ladder to patient vignettes and select the most appropriate drug therapy.",
+                question: "A 22-year-old man with sickle cell anemia presents to the emergency department with a vaso-occlusive crisis, reporting his pain as a '9 out of 10.' His home medication of hydrocodone/acetaminophen has been ineffective. According to the WHO pain ladder and the clinical context, which medication should be administered?",
+                options: {
+                    A: "Acetaminophen",
+                    B: "Ibuprofen",
+                    C: "Codeine",
+                    D: "Morphine"
+                },
+                correctAnswer: "D",
+                rationale: "The patient is experiencing severe, acute pain (9/10) that is unresponsive to a weak opioid combination. This places him at the top of the WHO 3-step ladder, indicating the need for a strong opioid for moderate to severe pain, such as morphine. Morphine is a drug of choice for severe pain.",
+                source: "'Opioid for moderate to severe pain... Morphine: Drug of choice in severe pain...' The case example on slide 47 confirms Morphine as the correct choice. (Pharmacotherapy of Pain, Slides 27, 42, 47)"
+            },
+            {
+                learningObjective: "LO 5 (Pharmacotherapy of Pain): Apply the pain ladder to patient vignettes and select the most appropriate drug therapy.",
+                question: "A patient with metastatic cancer reports persistent pain that he rates as a 5 out of 10, despite taking maximum doses of acetaminophen. According to the WHO 3-step ladder, what is the most appropriate next step in his pain management?",
+                options: {
+                    A: "Add a topical anesthetic.",
+                    B: "Add a weak opioid like codeine.",
+                    C: "Switch to a strong opioid like fentanyl.",
+                    D: "Begin a trial of gabapentin."
+                },
+                correctAnswer: "B",
+                rationale: "The patient has moderate pain (step 2 on the ladder) that is not controlled by a non-opioid alone. The next step is to add an opioid for mild to moderate pain (a 'weak analgesic'), such as codeine or hydrocodone, often in combination with the non-opioid.",
+                source: "'Step 2: Opioid for mild to moderate pain + Nonopioid +/- Adjuvant... Weak analgesics: codeine (others may include hydrocodone and oxycodone – when combined with acetaminophen or NSAIDs).' (Pharmacotherapy of Pain, Slide 42)"
+            },
+            // Pharmacotherapy of Arthropathies Questions
+            {
+                learningObjective: "LO 1 (Pharmacotherapy of Arthropathies): Describe eicosanoid pharmacology.",
+                question: "A patient takes a nonsteroidal anti-inflammatory drug (NSAID) which successfully reduces their fever and pain. The therapeutic effects of this drug are primarily mediated by inhibiting the synthesis of which class of molecules from arachidonic acid?",
+                options: {
+                    A: "Leukotrienes",
+                    B: "Prostaglandins",
+                    C: "HETEs",
+                    D: "Lipoxins"
+                },
+                correctAnswer: "B",
+                rationale: "NSAIDs work by inhibiting cyclooxygenase (COX) enzymes, which are responsible for converting arachidonic acid into prostanoids, including prostaglandins. Prostaglandins are key mediators of inflammation, pain, and fever.",
+                source: "'AA -> [Blocked by NSAIDs] -> PROSTAGLANDINS -> INFLAMMATION, PAIN, FEVER' (Pharmacotherapy of Arthropathies, Slide 2)"
+            },
+            {
+                learningObjective: "LO 1 (Pharmacotherapy of Arthropathies): Describe eicosanoid pharmacology.",
+                question: "The conversion of arachidonic acid into pro-inflammatory prostaglandins is a key step in the inflammatory cascade. This conversion is catalyzed by which of the following enzymes?",
+                options: {
+                    A: "Phospholipase A2",
+                    B: "Lipoxygenase (LOX)",
+                    C: "Cyclooxygenase (COX)",
+                    D: "Cyt P450 Epoxygenase"
+                },
+                correctAnswer: "C",
+                rationale: "Phospholipase A2 releases arachidonic acid from the membrane. Arachidonic acid is then converted into prostaglandins by the action of COX-1 and COX-2 enzymes.",
+                source: "(Diagram shows) 'Arachidonic acid -> [COX 1, COX 2] -> Prostanoids (Prostaglandins...)' (Pharmacotherapy of Pain, Slide 12)"
+            },
+            {
+                learningObjective: "LO 1 (Pharmacotherapy of Arthropathies): Describe eicosanoid pharmacology.",
+                question: "In the inflammatory pathway, arachidonic acid is liberated from membrane phospholipids to serve as a substrate for eicosanoid synthesis. Which enzyme is responsible for this initial step of releasing arachidonic acid?",
+                options: {
+                    A: "Cyclooxygenase-1 (COX-1)",
+                    B: "Cyclooxygenase-2 (COX-2)",
+                    C: "Lipoxygenase (LOX)",
+                    D: "Phospholipase A2"
+                },
+                correctAnswer: "D",
+                rationale: "The synthesis of eicosanoids begins when inflammatory stimuli activate Phospholipase A2, which then cleaves arachidonic acid from the membrane phospholipid bilayer, making it available for downstream enzymes like COX and LOX.",
+                source: "(Diagram shows) 'Inflammatory stimuli -> [+] -> Phospholipase A2 -> Arachidonic acid' (Pharmacotherapy of Pain, Slide 12)"
+            },
+            {
+                learningObjective: "LO 2 (Pharmacotherapy of Arthropathies): Discuss the pharmacological effects of NSAID drugs.",
+                question: "A physician prescribes a low-dose (80 mg/day) aspirin regimen for a patient for cardiovascular prophylaxis. This low dose is effective because it selectively inhibits the synthesis of which molecule, thereby reducing platelet aggregation?",
+                options: {
+                    A: "Prostaglandin E2 (PGE2)",
+                    B: "Prostacyclin (PGI2)",
+                    C: "Thromboxane A2 (TXA2)",
+                    D: "Leukotriene B4"
+                },
+                correctAnswer: "C",
+                rationale: "At low doses, aspirin preferentially and irreversibly inhibits COX-1 in platelets. This prevents the synthesis of Thromboxane A2 (TXA2), a potent promoter of platelet aggregation, without significantly affecting the production of the anti-aggregatory PGI2 by endothelial cells.",
+                source: "'Antiplatelet effects: TXA2 promotes platelet aggregation. Aspirin increases bleeding time by inhibiting TXA2 (COX-1)... Low-dose (40-80 mg/day): Inhibit TXA2 synthesis (COX-1) NOT PGI2 synthesis (COX-2).' (Pharmacotherapy of Arthropathies, Slides 4, 5)"
+            },
+            {
+                learningObjective: "LO 2 (Pharmacotherapy of Arthropathies): Discuss the pharmacological effects of NSAID drugs.",
+                question: "A patient with a fever is given a moderate dose of aspirin. The antipyretic effect of aspirin is achieved by reducing the production of prostaglandins in which part of the central nervous system?",
+                options: {
+                    A: "Cerebral cortex",
+                    B: "Cerebellum",
+                    C: "Spinal cord",
+                    D: "Hypothalamus"
+                },
+                correctAnswer: "D",
+                rationale: "Body temperature is regulated by the hypothalamus. During a fever, cytokines like IL and TNF-α increase prostaglandin production in the hypothalamus, raising the thermal set point. Aspirin reduces fever by inhibiting this prostaglandin synthesis.",
+                source: "'Antipyretic effects: Body temperature is regulated by hypothalamus. IL and TNFα increase PG production in the hypothalamus. Aspirin decreases fever by inhibiting IL and TNFα levels.' (Pharmacotherapy of Arthropathies, Slide 4)"
+            },
+            {
+                learningObjective: "LO 2 (Pharmacotherapy of Arthropathies): Discuss the pharmacological effects of NSAID drugs.",
+                question: "A patient requires a high dose of aspirin (e.g., 3000 mg/day) to manage the inflammation associated with their rheumatoid arthritis. This anti-inflammatory effect is primarily due to the inhibition of which enzyme?",
+                options: {
+                    A: "COX-1",
+                    B: "COX-2",
+                    C: "Lipoxygenase",
+                    D: "Phospholipase A2"
+                },
+                correctAnswer: "B",
+                rationale: "While aspirin inhibits both COX isoforms, its anti-inflammatory effects are largely attributed to the inhibition of COX-2, the inducible enzyme that is upregulated at sites of inflammation and is a major source of pro-inflammatory prostaglandins. High doses are required to achieve this effect.",
+                source: "'Anti-inflammatory effects: COX inhibition – COX-2... High doses (2400-4000 mg/day): anti-inflammatory effect.' (Pharmacotherapy of Arthropathies, Slides 3, 5)"
+            },
+            {
+                learningObjective: "LO 3 (Pharmacotherapy of Arthropathies): Discuss the pharmacological effects of COXIBs.",
+                question: "A patient with osteoarthritis and a history of peptic ulcer disease is prescribed celecoxib. The rationale for choosing this medication over a traditional NSAID like naproxen is that celecoxib has a lower risk of gastrointestinal bleeding due to its selective inhibition of which enzyme?",
+                options: {
+                    A: "COX-1",
+                    B: "COX-2",
+                    C: "5-Lipoxygenase",
+                    D: "Phospholipase A2"
+                },
+                correctAnswer: "B",
+                rationale: "COX-1 is constitutively expressed and produces 'cytoprotective' prostaglandins in the gastric mucosa. Traditional NSAIDs inhibit COX-1, increasing GI risk. COX-2 selective inhibitors (COXIBs) like celecoxib preferentially inhibit the inducible COX-2 enzyme at sites of inflammation, thereby sparing the protective effects of COX-1 in the stomach.",
+                source: "'Decreased 'cytoprotective' effects of PGs (COX-1)' leads to 'Gastric and intestinal ulceration.' Celecoxib is listed as a COX-2 selective NSAID. (Pharmacotherapy of Arthropathies, Slides 7, 14)"
+            },
+            {
+                learningObjective: "LO 3 (Pharmacotherapy of Arthropathies): Discuss the pharmacological effects of COXIBs.",
+                question: "While celecoxib offers a better gastrointestinal safety profile compared to non-selective NSAIDs, its use is associated with an increased risk for which of the following adverse events?",
+                options: {
+                    A: "Renal failure",
+                    B: "Hepatic toxicity",
+                    C: "Cardiovascular thrombotic events",
+                    D: "Aplastic anemia"
+                },
+                correctAnswer: "C",
+                rationale: "Selective inhibition of COX-2 can shift the balance between pro-thrombotic Thromboxane A2 (a COX-1 product) and anti-thrombotic Prostacyclin (PGI2, a COX-2 product in endothelial cells), leading to an increased risk of cardiovascular events like myocardial infarction and stroke.",
+                source: "'Celecoxib: Higher risk for CV events compared to non-selective NSAIDs.' (Pharmacotherapy of Pain, Slide 15)"
+            },
+            {
+                learningObjective: "LO 3 (Pharmacotherapy of Arthropathies): Discuss the pharmacological effects of COXIBs.",
+                question: "A physician is considering prescribing an NSAID for a patient with ankylosing spondylitis. The patient has a very high risk of GI bleeding but a low cardiovascular risk. Of the available non-selective NSAIDs, which one demonstrates the most preferential selectivity for COX-2, making it a relatively safer choice for this patient's GI tract?",
+                options: {
+                    A: "Ibuprofen",
+                    B: "Indomethacin",
+                    C: "Etodolac",
+                    D: "Ketorolac"
+                },
+                correctAnswer: "C",
+                rationale: "Among the drugs classified as 'non-selective,' some exhibit preferential activity. Etodolac and meloxicam show preferential selectivity for COX-2 over COX-1, which translates to a lower risk of GI adverse effects compared to other traditional NSAIDs.",
+                source: "'etodolac (Lodine) – preferential selectivity for COX-2... Etodolac: Most selective COX-2 NSAID of “non-selective” on market (low GI bleed risk; high CV risk).' (Pharmacotherapy of Pain, Slides 13, 15)"
+            },
+            {
+                learningObjective: "LO 4 (Pharmacotherapy of Arthropathies): Discuss the pharmacological effects of DMARDs.",
+                question: "A 50-year-old woman is newly diagnosed with rheumatoid arthritis. Her physician starts her on methotrexate as the first-line therapy. What is the primary mechanism of action of methotrexate at the low doses used for RA?",
+                options: {
+                    A: "Inhibition of dihydrofolate reductase",
+                    B: "Inhibition of pyrimidine synthesis",
+                    C: "Inhibition of AICAR transformylase leading to increased adenosine",
+                    D: "Inhibition of T-cell gene transcription"
+                },
+                correctAnswer: "C",
+                rationale: "In the low doses used for rheumatoid arthritis (as opposed to high doses for chemotherapy), methotrexate's primary anti-inflammatory mechanism is the inhibition of AICAR transformylase. This leads to an accumulation of adenosine, which has potent anti-inflammatory effects.",
+                source: "'Inhibits aminoimidazolecarboxamide (AICAR) transformylase. Antirheumatic activity - adenosine synthesis.' (Pharmacotherapy of Arthropathies, Slide 18)"
+            },
+            {
+                learningObjective: "LO 4 (Pharmacotherapy of Arthropathies): Discuss the pharmacological effects of DMARDs.",
+                question: "A patient with rheumatoid arthritis who failed to respond to methotrexate is started on leflunomide. This drug suppresses T-cell proliferation by reversibly inhibiting which enzyme?",
+                options: {
+                    A: "Xanthine oxidase",
+                    B: "Dihydroorotate dehydrogenase",
+                    C: "Janus kinase (JAK)",
+                    D: "TNF-alpha"
+                },
+                correctAnswer: "B",
+                rationale: "Leflunomide is a DMARD that works by inhibiting dihydroorotate dehydrogenase, a key enzyme in the de novo synthesis of pyrimidines. This action depletes pyrimidines, which are necessary for DNA synthesis, thereby suppressing the proliferation of activated T-cells.",
+                source: "'Reversibly inhibits dihydroorotate dehydrogenase, preventing pyrimidine synthesis. Suppresses T-cell proliferation.' (Pharmacotherapy of Arthropathies, Slide 19)"
+            },
+            {
+                learningObjective: "LO 4 (Pharmacotherapy of Arthropathies): Discuss the pharmacological effects of DMARDs.",
+                question: "A pregnant woman with systemic lupus erythematosus (SLE) requires treatment with a DMARD. Which of the following agents is considered one of the safer options for use during pregnancy?",
+                options: {
+                    A: "Methotrexate",
+                    B: "Leflunomide",
+                    C: "Hydroxychloroquine",
+                    D: "Cyclophosphamide"
+                },
+                correctAnswer: "C",
+                rationale: "Methotrexate, leflunomide, and cyclophosphamide are all teratogenic and contraindicated in pregnancy. Hydroxychloroquine is considered a relatively safe and often beneficial option for managing autoimmune diseases like RA and SLE during pregnancy.",
+                source: "'HYDROXYCHLOROQUINE (Plaquenil)... One of the safe options for pregnant women with RA or SLE.' (Pharmacotherapy of Arthropathies, Slide 20)"
+            },
+            {
+                learningObjective: "LO 5 (Pharmacotherapy of Arthropathies): Discuss the pharmacological effects of select immunotherapy medications.",
+                question: "A patient with severe rheumatoid arthritis is treated with adalimumab (Humira), a recombinant monoclonal antibody. This medication exerts its therapeutic effect by binding to and blocking the activity of which inflammatory cytokine?",
+                options: {
+                    A: "Interleukin-1 (IL-1)",
+                    B: "Interleukin-6 (IL-6)",
+                    C: "Interleukin-17A (IL-17A)",
+                    D: "Tumor Necrosis Factor-alpha (TNF-α)"
+                },
+                correctAnswer: "D",
+                rationale: "Adalimumab is a TNF-α blocking agent. It is a monoclonal antibody that binds to TNF-α, preventing it from activating its receptors on inflammatory cells, thereby decreasing macrophage and T-cell function and reducing inflammation.",
+                source: "'TNF-α BLOCKING AGENTS... Proteins that bind to TNF-α (prevent receptor activation). ADALIMUMAB (Humira): Recombinant monoclonal antibody. Decreases macrophage and T-cell function.' (Pharmacotherapy of Arthropathies, Slide 22)"
+            },
+            {
+                learningObjective: "LO 5 (Pharmacotherapy of Arthropathies): Discuss the pharmacological effects of select immunotherapy medications.",
+                question: "A patient with psoriatic arthritis is started on tofacitinib (Xeljanz). This oral medication represents a class of targeted synthetic DMARDs that work by inhibiting which intracellular signaling molecule?",
+                options: {
+                    A: "Janus Kinase (JAK)",
+                    B: "Tyrosine kinase",
+                    C: "p38 MAP kinase",
+                    D: "NF-κB"
+                },
+                correctAnswer: "A",
+                rationale: "Tofacitinib is a Janus Kinase (JAK) inhibitor. JAKs are intracellular enzymes that are crucial for transducing cytokine signals that activate immune cells. By inhibiting JAKs, tofacitinib blocks these signaling pathways.",
+                source: "'TOFACITINIB (Xeljanz): Janus Kinase (JAK) inhibitor.' (Pharmacotherapy of Arthropathies, Slide 25)"
+            },
+            {
+                learningObjective: "LO 5 (Pharmacotherapy of Arthropathies): Discuss the pharmacological effects of select immunotherapy medications.",
+                question: "A patient with ankylosing spondylitis is prescribed secukinumab (Cosentyx). This biologic agent is a monoclonal antibody that specifically targets and neutralizes which cytokine, a key driver of inflammation in spondyloarthropathies?",
+                options: {
+                    A: "TNF-α",
+                    B: "IL-1β",
+                    C: "IL-17A",
+                    D: "IL-6"
+                },
+                correctAnswer: "C",
+                rationale: "Secukinumab is a monoclonal antibody that selectively binds to and neutralizes Interleukin-17A (IL-17A). IL-17 is a key pro-inflammatory cytokine involved in the pathogenesis of several autoimmune conditions, including psoriatic arthritis and ankylosing spondylitis.",
+                source: "'SECUKINUMAB (Cosentyx): Monoclonal antibody (Immunosuppressant), Blocks IL-17A.' (Pharmacotherapy of Arthropathies, Slide 26)"
+            },
+            {
+                learningObjective: "LO 6 (Pharmacotherapy of Arthropathies): Recognize the possible adverse effects of arthropathy therapies.",
+                question: "A 10-year-old child with a high fever and body aches due to a viral infection is given aspirin by his parents. He develops persistent vomiting, listlessness, and personality changes. This presentation is highly concerning for Reye's syndrome, a severe complication affecting the brain and which other organ?",
+                options: {
+                    A: "Kidneys",
+                    B: "Heart",
+                    C: "Lungs",
+                    D: "Liver"
+                },
+                correctAnswer: "D",
+                rationale: "Reye's syndrome is a rare but serious condition associated with aspirin use in children with viral infections. It causes acute encephalopathy and fatty degenerative liver failure.",
+                source: "'Aspirin + Viral Infection: Reye's syndrome. Affects all organs of body. Most severe effects in brain and liver.' (Pharmacotherapy of Arthropathies, Slide 9)"
+            },
+            {
+                learningObjective: "LO 6 (Pharmacotherapy of Arthropathies): Recognize the possible adverse effects of arthropathy therapies.",
+                question: "A patient on long-term hydroxychloroquine therapy for SLE should undergo regular screening by an ophthalmologist to monitor for a specific, potentially irreversible adverse effect. What is this adverse effect?",
+                options: {
+                    A: "Cataracts",
+                    B: "Glaucoma",
+                    C: "Retinopathy",
+                    D: "Optic neuritis"
+                },
+                correctAnswer: "C",
+                rationale: "A significant adverse effect of long-term hydroxychloroquine use is retinal toxicity. It can cause a characteristic 'bull's eye' maculopathy, which can lead to irreversible vision loss if not detected early through regular screening.",
+                source: "'Adverse effects: Rash, diarrhea, myopathy, retinopathy (bull's eye).' (Pharmacotherapy of Arthropathies, Slide 20)"
+            },
+            {
+                learningObjective: "LO 6 (Pharmacotherapy of Arthropathies): Recognize the possible adverse effects of arthropathy therapies.",
+                question: "A patient being treated for severe chronic gout with allopurinol develops a maculopapular rash. While this can be a common side effect, the patient must be monitored for progression to which potentially fatal severe skin reactions?",
+                options: {
+                    A: "Erythema multiforme and urticaria",
+                    B: "Psoriasis and lichen planus",
+                    C: "Stevens-Johnson Syndrome (SJS) and Toxic Epidermal Necrolysis (TEN)",
+                    D: "Erythema nodosum and pyoderma gangrenosum"
+                },
+                correctAnswer: "C",
+                rationale: "Allopurinol is associated with a risk of severe cutaneous adverse reactions, including SJS and TEN, which are medical emergencies characterized by widespread blistering and sloughing of the skin and mucous membranes.",
+                source: "'Anti-gout Agent Allopurinol... Serious: SJS, TEN, myelosuppression, hepatotoxicity.' (Pharmacotherapy of Arthropathies, Slide 50)"
+            }
+        ];
+        const quizContainer = document.getElementById('quiz-container');
+        const themeToggleButton = document.getElementById('theme-toggle-button');
+        const bodyElement = document.body;
+
+        function applyTheme(theme) {
+            if (theme === 'light') {
+                bodyElement.classList.add('light-theme');
+                themeToggleButton.textContent = 'Switch to Dark Mode';
+            } else {
+                bodyElement.classList.remove('light-theme');
+                themeToggleButton.textContent = 'Switch to Light Mode';
+            }
+            localStorage.setItem('quizTheme', theme);
+        }
+
+        function loadQuiz() {
+            quizData.forEach((qData, index) => {
+                const questionBlock = document.createElement('div');
+                questionBlock.classList.add('question-block');
+                questionBlock.id = `q${index}`;
+
+                const loText = document.createElement('div');
+                loText.classList.add('learning-objective');
+                loText.textContent = qData.learningObjective;
+                questionBlock.appendChild(loText);
+
+                const questionText = document.createElement('p');
+                questionText.classList.add('question-text');
+                questionText.innerHTML = `${index + 1}. ${qData.question}`;
+                questionBlock.appendChild(questionText);
+
+                const optionsDiv = document.createElement('div');
+                optionsDiv.classList.add('options');
+                for (const optionKey in qData.options) {
+                    const optionId = `q${index}_${optionKey}`;
+                    const label = document.createElement('label');
+                    label.htmlFor = optionId;
+
+                    const radioInput = document.createElement('input');
+                    radioInput.type = 'radio';
+                    radioInput.name = `q${index}`;
+                    radioInput.value = optionKey;
+                    radioInput.id = optionId;
+
+                    const labelText = document.createElement('span');
+                    labelText.textContent = ` ${optionKey}. ${qData.options[optionKey]}`;
+
+                    label.appendChild(radioInput);
+                    label.appendChild(labelText);
+                    optionsDiv.appendChild(label);
+                }
+                questionBlock.appendChild(optionsDiv);
+
+                const buttonContainer = document.createElement('div');
+                buttonContainer.classList.add('button-container');
+
+                const checkButton = document.createElement('button');
+                checkButton.textContent = 'Check Answer';
+                checkButton.classList.add('check-button');
+                checkButton.onclick = () => checkAnswer(index);
+                buttonContainer.appendChild(checkButton);
+                questionBlock.appendChild(buttonContainer);
+
+                const feedbackDiv = document.createElement('div');
+                feedbackDiv.classList.add('feedback');
+                questionBlock.appendChild(feedbackDiv);
+
+                quizContainer.appendChild(questionBlock);
+            });
+        }
+
+        function checkAnswer(questionIndex) {
+            const questionBlockElement = document.getElementById(`q${questionIndex}`);
+            const selectedRadioButton = questionBlockElement.querySelector('input[type="radio"]:checked');
+            if (!selectedRadioButton) {
+                alert("Please select an answer first.");
+                return;
+            }
+            const selectedOptionKey = selectedRadioButton.value;
+            const qData = quizData[questionIndex];
+            const feedbackDiv = questionBlockElement.querySelector('.feedback');
+            const correct = selectedOptionKey === qData.correctAnswer;
+
+            let feedbackHTML = '';
+            if (correct) {
+                feedbackHTML = `<span class="feedback-status">Correct!</span>`;
+                feedbackDiv.className = 'feedback correct';
+            } else {
+                feedbackHTML = `<span class="feedback-status">Incorrect. The correct answer is ${qData.correctAnswer}.</span>`;
+                feedbackDiv.className = 'feedback incorrect';
+            }
+
+            feedbackHTML += `<div class="feedback-rationale"><strong>Rationale:</strong> ${qData.rationale}</div>`;
+            feedbackHTML += `<div class="feedback-source"><strong>Source:</strong> ${qData.source}</div>`;
+
+            feedbackDiv.innerHTML = feedbackHTML;
+        }
+
+        themeToggleButton.addEventListener('click', () => {
+            if (bodyElement.classList.contains('light-theme')) {
+                applyTheme('dark');
+            } else {
+                applyTheme('light');
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('quizTheme') || 'dark';
+            applyTheme(savedTheme);
+            loadQuiz();
+        });
+    </script>
+</body>
+</html>
